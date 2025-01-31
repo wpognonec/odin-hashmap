@@ -71,7 +71,7 @@ export default class LinkedList {
     for (let i = 0, node = this.headNode; node; i++, node = node.nextNode) {
       if (node.key === key) return node.value
     }
-    return null
+    return undefined
   }
 
   findIndex(key) {

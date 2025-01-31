@@ -1,9 +1,5 @@
 import LinkedList from "./linkedList.js"
 
-function Node(key = null, value = null, nextNode = null) {
-  return { key, value, nextNode }
-}
-
 class HashMap {
   constructor(loadFactor = 0.75, capacity = 16) {
     this.loadFactor = loadFactor
@@ -15,7 +11,7 @@ class HashMap {
     let hashCode = 0
     const primeNumber = 31
     for (let i = 0; i < key.length; i++) {
-      hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % 16
+      hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.capacity
     }
     return hashCode
   }
@@ -87,36 +83,109 @@ class HashMap {
   }
 }
 
-const test = new HashMap()
-test.set("apple", "red")
-test.set("banana", "yellow")
-test.set("carrot", "orange")
-test.set("dog", "brown")
-test.set("elephant", "gray")
-test.set("frog", "green")
-test.set("grape", "purple")
-test.set("hat", "black")
-test.set("ice cream", "white")
-test.set("jacket", "blue")
-test.set("kite", "pink")
-test.set("lion", "golden")
+// Test Case 1: Basic Set and Get Operations
+let map = new HashMap()
 
-console.log(test.length())
-test.set("hats", "blacks")
-console.log(test.length())
+map.set("name", "Alice")
+map.set("age", 25)
 
-// console.log(test.get("kite"))
-// console.log(test.has("kite"))
-// console.log(test.length())
-// test.remove("kite")
+console.assert(map.get("name") === "Alice", "Test 1 Failed")
+console.assert(map.get("age") === 25, "Test 2 Failed")
+console.assert(map.get("nonexistent") === undefined, "Test 3 Failed")
+console.log("Test 1 passed: Basic Set and Get")
 
-// console.log(test.get("kite"))
-// console.log(test.has("kite"))
-// console.log(test.length())
+// Test Case 2: Overwrite an Existing Key
+map = new HashMap()
 
-test.set("grape", "purplesss")
-// console.log(test.get("grape"))
-// console.log(test.length())
-// console.log(test.keys())
-// console.log(test.values())
-// console.log(test.entries())
+map.set("name", "Alice")
+map.set("name", "Bob")
+
+console.assert(map.get("name") === "Bob", "Test 4 Failed")
+console.log("Test 2 passed: Overwrite Existing Key")
+
+// Test Case 3: Check Presence of a Key (has)
+map = new HashMap()
+
+map.set("name", "Alice")
+
+console.assert(map.has("name") === true, "Test 5 Failed")
+console.assert(map.has("age") === false, "Test 6 Failed")
+console.log("Test 3 passed: Check Presence of a Key")
+
+// Test Case 4: Remove a Key
+map = new HashMap()
+
+map.set("name", "Alice")
+map.remove("name")
+
+console.assert(map.get("name") === undefined, "Test 7 Failed")
+console.assert(map.has("name") === false, "Test 8 Failed")
+console.log("Test 4 passed: Remove a Key")
+
+// Test Case 5: Resizing the HashMap
+map = new HashMap(0.75, 4) // small initial capacity to trigger resizing
+
+map.set("name", "Alice")
+map.set("age", 25)
+map.set("city", "Wonderland")
+map.set("country", "Fiction")
+
+console.assert(map.capacity === 8, "Test 9 Failed") // HashMap should resize after 4 entries
+console.log("Test 5 passed: Resizing the HashMap")
+
+// Test Case 6: Clear the HashMap
+map = new HashMap()
+
+map.set("name", "Alice")
+map.set("age", 25)
+
+map.clear()
+
+console.assert(map.length() === 0, "Test 10 Failed")
+console.assert(map.get("name") === undefined, "Test 11 Failed")
+console.log("Test 6 passed: Clear the HashMap")
+
+// Test Case 7: Keys, Values, and Entries Methods
+map = new HashMap()
+
+map.set("name", "Alice")
+map.set("age", 25)
+map.set("city", "Wonderland")
+
+const keys = map.keys()
+const values = map.values()
+const entries = map.entries()
+
+console.assert(keys.length === 3, "Test 12 Failed")
+console.assert(values.length === 3, "Test 13 Failed")
+console.assert(entries.length === 3, "Test 14 Failed")
+console.assert(keys.includes("name"), "Test 15 Failed")
+console.assert(values.includes("Alice"), "Test 16 Failed")
+console.log("Test 7 passed: Keys, Values, and Entries Methods")
+
+// Test Case 8: Edge Case for Empty HashMap
+map = new HashMap()
+
+console.assert(map.length() === 0, "Test 17 Failed")
+console.assert(map.get("anyKey") === undefined, "Test 18 Failed")
+console.log("Test 8 passed: Edge Case for Empty HashMap")
+
+// Test Case 9: Handling Collisions (if hash function causes collisions)
+map = new HashMap()
+
+map.set("dog", "brown")
+map.set("lion", "golden") // This has same hash as dog
+
+console.assert(map.get("dog") === "brown", "Test 19 Failed")
+console.assert(map.get("lion") === "golden", "Test 20 Failed")
+console.log("Test 9 passed: Handling Collisions")
+
+// Test Case 10: Large Number of Entries (Stress Test)
+map = new HashMap()
+
+for (let i = 0; i < 1000; i++) {
+  map.set(`key${i}`, `value${i}`)
+}
+
+console.assert(map.length() === 1000, "Test 21 Failed")
+console.log("Test 10 passed: Large Number of Entries (Stress Test)")
