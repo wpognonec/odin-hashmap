@@ -6,9 +6,9 @@ function Node(key = null, value = null, nextNode = null) {
 
 class HashMap {
   constructor(loadFactor = 0.75, capacity = 16) {
-    this.map = Array.from({ length: capacity }, () => new LinkedList())
-    this.loadFactor = 0.75
+    this.loadFactor = loadFactor
     this.capacity = capacity
+    this.map = Array.from({ length: this.capacity }, () => new LinkedList())
   }
 
   hash(key) {
@@ -25,6 +25,16 @@ class HashMap {
     let node = this.map[keyHash].findNode(key)
     if (node) node.value = value
     else this.map[keyHash].append(key, value)
+    if (this.length() > this.capacity * this.loadFactor) this.resize()
+  }
+
+  resize() {
+    let entries = this.entries()
+    this.capacity *= 2
+    this.map = Array.from({ length: this.capacity }, () => new LinkedList())
+    entries.forEach((entry) => {
+      this.set(entry[0], entry[1])
+    })
   }
 
   get(key) {
@@ -44,22 +54,18 @@ class HashMap {
   }
 
   length() {
-    let size = 0
-    this.map.forEach((bucket) => {
-      if (bucket) size += bucket.size()
-    })
-    return size
+    return this.keys().length
   }
 
   clear() {
-    this.map = Array.from({ length: capacity }, () => new LinkedList())
+    this.map = Array.from({ length: this.capacity }, () => new LinkedList())
     this.capacity = 16
   }
 
   keys() {
     let keys = []
-    this.map.forEach((bucket) => {
-      keys = keys.concat(bucket.toArrayKeys())
+    this.map.forEach((bucket, i) => {
+      keys = keys.concat(bucket.toArray("key"))
     })
     return keys
   }
@@ -67,7 +73,7 @@ class HashMap {
   values() {
     let values = []
     this.map.forEach((bucket) => {
-      values = values.concat(bucket.toArrayValues())
+      values = values.concat(bucket.toArray("value"))
     })
     return values
   }
@@ -95,18 +101,22 @@ test.set("jacket", "blue")
 test.set("kite", "pink")
 test.set("lion", "golden")
 
-console.log(test.get("kite"))
-console.log(test.has("kite"))
 console.log(test.length())
-test.remove("kite")
+test.set("hats", "blacks")
+console.log(test.length())
 
-console.log(test.get("kite"))
-console.log(test.has("kite"))
-console.log(test.length())
+// console.log(test.get("kite"))
+// console.log(test.has("kite"))
+// console.log(test.length())
+// test.remove("kite")
+
+// console.log(test.get("kite"))
+// console.log(test.has("kite"))
+// console.log(test.length())
 
 test.set("grape", "purplesss")
-console.log(test.get("grape"))
-console.log(test.length())
-console.log(test.keys())
-console.log(test.values())
-console.log(test.entries())
+// console.log(test.get("grape"))
+// console.log(test.length())
+// console.log(test.keys())
+// console.log(test.values())
+// console.log(test.entries())

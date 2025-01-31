@@ -101,26 +101,16 @@ export default class LinkedList {
     return this.toArrayValues().join(" -> ") || "List is empty"
   }
 
-  toArrayKeys() {
+  toArray(type) {
     const result = []
     for (let node = this.headNode; node; node = node.nextNode) {
-      result.push(node.key)
-    }
-    return result
-  }
-
-  toArrayValues() {
-    const result = []
-    for (let node = this.headNode; node; node = node.nextNode) {
-      result.push(node.value)
-    }
-    return result
-  }
-
-  toArray() {
-    const result = []
-    for (let node = this.headNode; node; node = node.nextNode) {
-      result.push([node.key, node.value])
+      result.push(
+        type === "value"
+          ? node.value
+          : type === "key"
+          ? node.key
+          : [node.key, node.value]
+      )
     }
     return result
   }
